@@ -47,7 +47,12 @@ const firstInteraction = new Set();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  baseURL: 'https://api.navy/v1'
+  baseURL: 'https://api.navy/v1',
+  fetchOptions: {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+    }
+  }
 });
 
 const API_ERROR_LOG = path.join(__dirname, 'data/api-errors.log');
