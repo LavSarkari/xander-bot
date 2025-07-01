@@ -51,7 +51,7 @@ function generateMainMenu(client) {
       .setStyle(4)
       .setEmoji('❌')
   );
-  return { embeds: [mainEmbed], components: [categorySelect, linkButtons, closeButtonRow], flags: 64 };
+  return { embeds: [mainEmbed], components: [categorySelect, linkButtons, closeButtonRow] };
 }
 
 module.exports = {
@@ -100,7 +100,7 @@ module.exports = {
         .setTitle(`${category.emoji} ${category.label}`)
         .setDescription(category.description || 'Please select a command from the dropdown menu to see more information.')
         .setFooter({ text: getRandomCompliment(), iconURL: 'https://cdn.discordapp.com/emojis/924923943746428928.webp?size=128' });
-      await interaction.update({ embeds: [categoryEmbed], components: [menuRow, backButtonRow, closeButtonRow], flags: 64 });
+      await interaction.update({ embeds: [categoryEmbed], components: [menuRow, backButtonRow, closeButtonRow] });
       return;
     }
     if (interaction.customId === 'help_back_main') {
