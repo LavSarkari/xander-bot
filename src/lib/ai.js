@@ -1,5 +1,10 @@
 import 'dotenv/config';
 import OpenAI from "openai";
+import https from "https";
+
+const agent = new https.Agent({
+  family: 4 // 👈 Force IPv4
+});
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || process.env.NAVYAI_API_KEY,
@@ -8,7 +13,8 @@ const openai = new OpenAI({
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
     }
-  }
+  },
+  httpAgent: agent,
 });
 
 console.log('Using OpenAI API Key:', process.env.OPENAI_API_KEY || process.env.NAVYAI_API_KEY);

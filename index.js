@@ -19,6 +19,7 @@ const path = require('path');
 const { userNotes, userReminders, userConversations, translateCooldowns } = require('./src/lib/state.js');
 const { getRandomCompliment } = require('./src/lib/utils');
 const helpCommand = require('./src/commands/help.js');
+const https = require("https");
 
 const math = create(all);
 
@@ -45,6 +46,10 @@ for (const file of commandFiles) {
 
 const firstInteraction = new Set();
 
+const agent = new https.Agent({
+  family: 4 // 👈 Force IPv4
+});
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   baseURL: 'https://api.navy/v1',
@@ -52,7 +57,8 @@ const openai = new OpenAI({
     headers: {
       "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
     }
-  }
+  },
+  httpAgent: agent,
 });
 
 const API_ERROR_LOG = path.join(__dirname, 'data/api-errors.log');
