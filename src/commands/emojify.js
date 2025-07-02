@@ -25,6 +25,7 @@ module.exports = {
       } else {
         await interaction.reply({ content: 'Error emojifying text.' });
       }
+      return;
     }
   }
 }; 

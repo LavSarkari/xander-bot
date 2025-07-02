@@ -58,6 +58,7 @@ module.exports = {
       } else {
         await interaction.reply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
       }
+      return;
     }
   }
 }; 

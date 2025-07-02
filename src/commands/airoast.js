@@ -31,6 +31,7 @@ module.exports = {
       } else {
         await interaction.reply({ content: 'Error generating roast.' });
       }
+      return;
     }
   }
 }; 

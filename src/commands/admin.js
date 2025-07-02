@@ -204,6 +204,7 @@ module.exports = {
         } else {
           await interaction.reply({ content: '❌ Failed to broadcast message.' });
         }
+        return;
       }
     } else if (sub === 'userinfo') {
       const userInput = interaction.options.getString('user');
@@ -236,6 +237,7 @@ module.exports = {
         } else {
           await interaction.reply({ content: '❌ Failed to remove profile.' });
         }
+        return;
       }
     } else if (sub === 'forcematch') {
       const userInput1 = interaction.options.getString('user1');
@@ -260,6 +262,7 @@ module.exports = {
         } else {
           await interaction.reply({ content: '❌ Failed to force match users.' });
         }
+        return;
       }
     } else if (sub === 'stats') {
       const vibeProfiles = await getVibeProfiles();
@@ -280,6 +283,7 @@ module.exports = {
         } else {
           await interaction.reply({ content: '❌ Failed to reload commands.' });
         }
+        return;
       }
     } else if (sub === 'blacklist') {
       const action = interaction.options.getString('action');
@@ -320,6 +324,7 @@ module.exports = {
         } else {
           await interaction.reply({ content: `❌ Failed to send message in <#${channelId}>.` });
         }
+        return;
       }
     }
   }

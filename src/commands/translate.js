@@ -35,6 +35,7 @@ module.exports = {
       } else {
         await interaction.reply({ content: 'Error translating text.' });
       }
+      return;
     }
   }
 }; 

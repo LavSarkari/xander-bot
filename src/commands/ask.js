@@ -38,6 +38,7 @@ module.exports = {
       } else {
         await interaction.reply({ content: '❌ An error occurred while talking to the AI.', flags: 64 });
       }
+      return;
     }
   }
 }; 

@@ -38,6 +38,7 @@ module.exports = {
       } else {
         await interaction.reply({ content: 'Error generating reply.' });
       }
+      return;
     }
   }
 }; 
