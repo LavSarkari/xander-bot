@@ -14,8 +14,10 @@ module.exports = {
     const userId = interaction.user.id;
     let history = [];
     history.push({ role: 'user', content: message });
+    let deferred = false;
     try {
       await interaction.deferReply({ flags: 64 });
+      deferred = true;
       const chatCompletion = await safeOpenAICall(() => openai.chat.completions.create({
         model: 'gpt-4o',
         messages: history,
@@ -31,7 +33,11 @@ module.exports = {
         );
       await interaction.editReply({ embeds: [replyEmbed] });
     } catch (error) {
-      await interaction.editReply({ content: '❌ An error occurred while talking to the AI.', flags: 64 });
+      if (deferred) {
+        await interaction.editReply({ content: '❌ An error occurred while talking to the AI.', flags: 64 });
+      } else {
+        await interaction.reply({ content: '❌ An error occurred while talking to the AI.', flags: 64 });
+      }
     }
   }
 }; 

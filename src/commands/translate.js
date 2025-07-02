@@ -22,13 +22,19 @@ module.exports = {
     }
     translateCooldowns.set(userId, now);
     const input = interaction.options.getString('text');
+    let deferred = false;
     try {
       await interaction.deferReply({ flags: 64 });
+      deferred = true;
       const result = await translate(input);
       await interaction.editReply({ content: `**Original:** ${input}\n**Translated:** ${result}` });
       await logToWebhook(`User: ${interaction.user.tag} (${interaction.user.id})\nInput: ${input}\nChannel: ${interaction.channelId}\nGuild: ${interaction.guild ? interaction.guild.name + ' (' + interaction.guild.id + ')' : 'DM'}`);
     } catch (err) {
-      await interaction.editReply({ content: 'Error translating text.' });
+      if (deferred) {
+        await interaction.editReply({ content: 'Error translating text.' });
+      } else {
+        await interaction.reply({ content: 'Error translating text.' });
+      }
     }
   }
 }; 

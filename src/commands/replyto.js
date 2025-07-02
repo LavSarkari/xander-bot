@@ -25,13 +25,19 @@ module.exports = {
   async execute(interaction, { logToWebhook }) {
     const text = interaction.options.getString('text');
     const style = interaction.options.getString('style');
+    let deferred = false;
     try {
       await interaction.deferReply({ flags: 64 });
+      deferred = true;
       const result = await replyTo(text, style);
       await interaction.editReply({ content: result });
       await logToWebhook(`replyto used by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild ? interaction.guild.name + ' (' + interaction.guild.id + ')' : 'DM'}`);
     } catch (err) {
-      await interaction.editReply({ content: 'Error generating reply.' });
+      if (deferred) {
+        await interaction.editReply({ content: 'Error generating reply.' });
+      } else {
+        await interaction.reply({ content: 'Error generating reply.' });
+      }
     }
   }
 }; 

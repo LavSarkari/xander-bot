@@ -27,8 +27,10 @@ module.exports = {
     const compatibility = (seed % 100) + 1;
     const otpName = `${user1.username.slice(0, Math.ceil(user1.username.length / 2))}${user2.username.slice(Math.floor(user2.username.length / 2))}`;
     const vibeBar = '❤️'.repeat(Math.floor(compatibility / 10)) + '💔'.repeat(10 - Math.floor(compatibility / 10));
+    let deferred = false;
     try {
       await interaction.deferReply();
+      deferred = true;
       let prompt = `Why are ${user1.username} and ${user2.username} ${compatibility}% compatible? Give a fun, one-sentence reason.`;
       if (chaos) {
         prompt += ' Also, add a random, funny insult or a fictional dramatic scandal about their relationship.';
@@ -51,7 +53,11 @@ module.exports = {
         .setTimestamp();
       await interaction.editReply({ embeds: [shipEmbed] });
     } catch (error) {
-      await interaction.editReply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
+      if (deferred) {
+        await interaction.editReply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
+      } else {
+        await interaction.reply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
+      }
     }
   }
 }; 

@@ -184,17 +184,27 @@ module.exports = {
       }
     } else if (sub === 'broadcast') {
       const message = interaction.options.getString('message');
-      await interaction.deferReply({ flags: 64 });
-      const vibeProfiles = await getVibeProfiles();
-      let count = 0;
-      for (const userId of vibeProfiles.keys()) {
-        try {
-          const user = await interaction.client.users.fetch(userId);
-          await user.send(message);
-          count++;
-        } catch {}
+      let deferred = false;
+      try {
+        await interaction.deferReply({ flags: 64 });
+        deferred = true;
+        const vibeProfiles = await getVibeProfiles();
+        let count = 0;
+        for (const userId of vibeProfiles.keys()) {
+          try {
+            const user = await interaction.client.users.fetch(userId);
+            await user.send(message);
+            count++;
+          } catch {}
+        }
+        await interaction.editReply({ content: `✅ Broadcast sent to ${count} users.` });
+      } catch (e) {
+        if (deferred) {
+          await interaction.editReply({ content: '❌ Failed to broadcast message.' });
+        } else {
+          await interaction.reply({ content: '❌ Failed to broadcast message.' });
+        }
       }
-      await interaction.editReply({ content: `✅ Broadcast sent to ${count} users.` });
     } else if (sub === 'userinfo') {
       const userInput = interaction.options.getString('user');
       const user = await resolveUser(userInput, interaction.client);
@@ -206,31 +216,51 @@ module.exports = {
       await interaction.reply({ content: `User: <@${user.id}> (${user.id})\nAdmin: ${admin}\nBlacklisted: ${blacklisted}\nProfile: ${profile ? JSON.stringify(profile, null, 2) : 'None'}`, flags: 64 });
     } else if (sub === 'removeprofile') {
       const userInput = interaction.options.getString('user');
-      await interaction.deferReply({ flags: 64 });
-      const user = await resolveUser(userInput, interaction.client);
-      if (!user) return interaction.editReply({ content: '❌ User not found.' });
-      const vibeProfiles = await getVibeProfiles();
-      if (vibeProfiles.has(user.id)) {
-        vibeProfiles.delete(user.id);
-        await saveVibeProfiles();
-        await interaction.editReply({ content: `✅ Removed profile for <@${user.id}>.` });
-      } else {
-        await interaction.editReply({ content: `⚠️ No profile found for <@${user.id}>.` });
+      let deferred = false;
+      try {
+        await interaction.deferReply({ flags: 64 });
+        deferred = true;
+        const user = await resolveUser(userInput, interaction.client);
+        if (!user) return await interaction.editReply({ content: '❌ User not found.' });
+        const vibeProfiles = await getVibeProfiles();
+        if (vibeProfiles.has(user.id)) {
+          vibeProfiles.delete(user.id);
+          await saveVibeProfiles();
+          await interaction.editReply({ content: `✅ Removed profile for <@${user.id}>.` });
+        } else {
+          await interaction.editReply({ content: `⚠️ No profile found for <@${user.id}>.` });
+        }
+      } catch (e) {
+        if (deferred) {
+          await interaction.editReply({ content: '❌ Failed to remove profile.' });
+        } else {
+          await interaction.reply({ content: '❌ Failed to remove profile.' });
+        }
       }
     } else if (sub === 'forcematch') {
       const userInput1 = interaction.options.getString('user1');
       const userInput2 = interaction.options.getString('user2');
-      await interaction.deferReply({ flags: 64 });
-      const user1 = await resolveUser(userInput1, interaction.client);
-      const user2 = await resolveUser(userInput2, interaction.client);
-      if (!user1 || !user2) return interaction.editReply({ content: '❌ One or both users not found.' });
-      matchedPairs[user1.id] = { matchedUserId: user2.id };
-      matchedPairs[user2.id] = { matchedUserId: user1.id };
-      await interaction.editReply({ content: `✅ Matched <@${user1.id}> and <@${user2.id}>.` });
+      let deferred = false;
       try {
-        await user1.send(`🔔 You have been force-matched with <@${user2.id}> by an admin! Use /reveal to connect.`);
-        await user2.send(`🔔 You have been force-matched with <@${user1.id}> by an admin! Use /reveal to connect.`);
-      } catch {}
+        await interaction.deferReply({ flags: 64 });
+        deferred = true;
+        const user1 = await resolveUser(userInput1, interaction.client);
+        const user2 = await resolveUser(userInput2, interaction.client);
+        if (!user1 || !user2) return await interaction.editReply({ content: '❌ One or both users not found.' });
+        matchedPairs[user1.id] = { matchedUserId: user2.id };
+        matchedPairs[user2.id] = { matchedUserId: user1.id };
+        await interaction.editReply({ content: `✅ Matched <@${user1.id}> and <@${user2.id}>.` });
+        try {
+          await user1.send(`🔔 You have been force-matched with <@${user2.id}> by an admin! Use /reveal to connect.`);
+          await user2.send(`🔔 You have been force-matched with <@${user1.id}> by an admin! Use /reveal to connect.`);
+        } catch {}
+      } catch (e) {
+        if (deferred) {
+          await interaction.editReply({ content: '❌ Failed to force match users.' });
+        } else {
+          await interaction.reply({ content: '❌ Failed to force match users.' });
+        }
+      }
     } else if (sub === 'stats') {
       const vibeProfiles = await getVibeProfiles();
       const numProfiles = vibeProfiles.size;
@@ -238,12 +268,18 @@ module.exports = {
       const numBlacklisted = getBlacklist().length;
       await interaction.reply({ content: `📊 Bot Stats:\nProfiles: ${numProfiles}\nAdmins: ${numAdmins}\nBlacklisted: ${numBlacklisted}`, flags: 64 });
     } else if (sub === 'reloadcommands') {
-      await interaction.deferReply({ flags: 64 });
+      let deferred = false;
       try {
+        await interaction.deferReply({ flags: 64 });
+        deferred = true;
         await interaction.client.application.commands.set(interaction.client.commandsArray);
         await interaction.editReply({ content: '✅ Commands reloaded.' });
       } catch (e) {
-        await interaction.editReply({ content: '❌ Failed to reload commands.' });
+        if (deferred) {
+          await interaction.editReply({ content: '❌ Failed to reload commands.' });
+        } else {
+          await interaction.reply({ content: '❌ Failed to reload commands.' });
+        }
       }
     } else if (sub === 'blacklist') {
       const action = interaction.options.getString('action');
@@ -271,13 +307,19 @@ module.exports = {
     } else if (sub === 'say') {
       const channelId = interaction.options.getString('channelid');
       const message = interaction.options.getString('message');
-      await interaction.deferReply({ flags: 64 });
+      let deferred = false;
       try {
+        await interaction.deferReply({ flags: 64 });
+        deferred = true;
         const channel = await interaction.client.channels.fetch(channelId);
         await channel.send(message);
         await interaction.editReply({ content: `✅ Message sent in <#${channelId}>.` });
       } catch (e) {
-        await interaction.editReply({ content: `❌ Failed to send message in <#${channelId}>.` });
+        if (deferred) {
+          await interaction.editReply({ content: `❌ Failed to send message in <#${channelId}>.` });
+        } else {
+          await interaction.reply({ content: `❌ Failed to send message in <#${channelId}>.` });
+        }
       }
     }
   }
