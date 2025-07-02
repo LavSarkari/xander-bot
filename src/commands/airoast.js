@@ -26,10 +26,14 @@ module.exports = {
       await interaction.editReply({ content: `<@${targetUser.id}> ${roast}` });
       await logToWebhook(`airoast used by ${interaction.user.tag} on ${targetUser.tag} in ${interaction.guild ? interaction.guild.name + ' (' + interaction.guild.id + ')' : 'DM'}`);
     } catch (err) {
-      if (deferred) {
-        await interaction.editReply({ content: 'Error generating roast.' });
-      } else {
-        await interaction.reply({ content: 'Error generating roast.' });
+      try {
+        if (deferred) {
+          await interaction.editReply({ content: 'Error generating roast.' });
+        } else {
+          await interaction.reply({ content: 'Error generating roast.' });
+        }
+      } catch (e) {
+        console.error('Failed to send error reply:', e);
       }
       return;
     }

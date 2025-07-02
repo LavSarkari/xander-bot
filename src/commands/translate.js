@@ -30,10 +30,14 @@ module.exports = {
       await interaction.editReply({ content: `**Original:** ${input}\n**Translated:** ${result}` });
       await logToWebhook(`User: ${interaction.user.tag} (${interaction.user.id})\nInput: ${input}\nChannel: ${interaction.channelId}\nGuild: ${interaction.guild ? interaction.guild.name + ' (' + interaction.guild.id + ')' : 'DM'}`);
     } catch (err) {
-      if (deferred) {
-        await interaction.editReply({ content: 'Error translating text.' });
-      } else {
-        await interaction.reply({ content: 'Error translating text.' });
+      try {
+        if (deferred) {
+          await interaction.editReply({ content: 'Error translating text.' });
+        } else {
+          await interaction.reply({ content: 'Error translating text.' });
+        }
+      } catch (e) {
+        console.error('Failed to send error reply:', e);
       }
       return;
     }

@@ -199,10 +199,14 @@ module.exports = {
         }
         await interaction.editReply({ content: `✅ Broadcast sent to ${count} users.` });
       } catch (e) {
-        if (deferred) {
-          await interaction.editReply({ content: '❌ Failed to broadcast message.' });
-        } else {
-          await interaction.reply({ content: '❌ Failed to broadcast message.' });
+        try {
+          if (deferred) {
+            await interaction.editReply({ content: '❌ Failed to broadcast message.' });
+          } else {
+            await interaction.reply({ content: '❌ Failed to broadcast message.' });
+          }
+        } catch (err) {
+          console.error('Failed to send error reply:', err);
         }
         return;
       }
@@ -232,10 +236,14 @@ module.exports = {
           await interaction.editReply({ content: `⚠️ No profile found for <@${user.id}>.` });
         }
       } catch (e) {
-        if (deferred) {
-          await interaction.editReply({ content: '❌ Failed to remove profile.' });
-        } else {
-          await interaction.reply({ content: '❌ Failed to remove profile.' });
+        try {
+          if (deferred) {
+            await interaction.editReply({ content: '❌ Failed to remove profile.' });
+          } else {
+            await interaction.reply({ content: '❌ Failed to remove profile.' });
+          }
+        } catch (err) {
+          console.error('Failed to send error reply:', err);
         }
         return;
       }
@@ -257,10 +265,14 @@ module.exports = {
           await user2.send(`🔔 You have been force-matched with <@${user1.id}> by an admin! Use /reveal to connect.`);
         } catch {}
       } catch (e) {
-        if (deferred) {
-          await interaction.editReply({ content: '❌ Failed to force match users.' });
-        } else {
-          await interaction.reply({ content: '❌ Failed to force match users.' });
+        try {
+          if (deferred) {
+            await interaction.editReply({ content: '❌ Failed to force match users.' });
+          } else {
+            await interaction.reply({ content: '❌ Failed to force match users.' });
+          }
+        } catch (err) {
+          console.error('Failed to send error reply:', err);
         }
         return;
       }
@@ -278,10 +290,14 @@ module.exports = {
         await interaction.client.application.commands.set(interaction.client.commandsArray);
         await interaction.editReply({ content: '✅ Commands reloaded.' });
       } catch (e) {
-        if (deferred) {
-          await interaction.editReply({ content: '❌ Failed to reload commands.' });
-        } else {
-          await interaction.reply({ content: '❌ Failed to reload commands.' });
+        try {
+          if (deferred) {
+            await interaction.editReply({ content: '❌ Failed to reload commands.' });
+          } else {
+            await interaction.reply({ content: '❌ Failed to reload commands.' });
+          }
+        } catch (err) {
+          console.error('Failed to send error reply:', err);
         }
         return;
       }
@@ -319,10 +335,14 @@ module.exports = {
         await channel.send(message);
         await interaction.editReply({ content: `✅ Message sent in <#${channelId}>.` });
       } catch (e) {
-        if (deferred) {
-          await interaction.editReply({ content: `❌ Failed to send message in <#${channelId}>.` });
-        } else {
-          await interaction.reply({ content: `❌ Failed to send message in <#${channelId}>.` });
+        try {
+          if (deferred) {
+            await interaction.editReply({ content: `❌ Failed to send message in <#${channelId}>.` });
+          } else {
+            await interaction.reply({ content: `❌ Failed to send message in <#${channelId}>.` });
+          }
+        } catch (err) {
+          console.error('Failed to send error reply:', err);
         }
         return;
       }

@@ -20,10 +20,14 @@ module.exports = {
       await interaction.editReply({ content: `**Original:**\n${input}\n\n**Explanation:**\n${result}` });
       await logToWebhook(`explain used by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild ? interaction.guild.name + ' (' + interaction.guild.id + ')' : 'DM'}`);
     } catch (err) {
-      if (deferred) {
-        await interaction.editReply({ content: 'Error explaining text.' });
-      } else {
-        await interaction.reply({ content: 'Error explaining text.' });
+      try {
+        if (deferred) {
+          await interaction.editReply({ content: 'Error explaining text.' });
+        } else {
+          await interaction.reply({ content: 'Error explaining text.' });
+        }
+      } catch (e) {
+        console.error('Failed to send error reply:', e);
       }
       return;
     }

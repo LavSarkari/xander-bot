@@ -53,10 +53,14 @@ module.exports = {
         .setTimestamp();
       await interaction.editReply({ embeds: [shipEmbed] });
     } catch (error) {
-      if (deferred) {
-        await interaction.editReply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
-      } else {
-        await interaction.reply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
+      try {
+        if (deferred) {
+          await interaction.editReply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
+        } else {
+          await interaction.reply({ content: '❌ An error occurred while calculating the ship.', flags: 64 });
+        }
+      } catch (err) {
+        console.error('Failed to send error reply:', err);
       }
       return;
     }
